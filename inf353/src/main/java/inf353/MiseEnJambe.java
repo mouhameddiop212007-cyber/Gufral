@@ -7,6 +7,7 @@ import java.io.*;
  */
 public class MiseEnJambe {
     public String texte;
+    //public int N = 100000;
 
     public MiseEnJambe(String texte) {
         this.texte = texte;

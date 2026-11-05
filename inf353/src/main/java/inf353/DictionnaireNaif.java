@@ -13,114 +13,218 @@ public class DictionnaireNaif implements Dictionnaire {
         this.MARQUE = '\0'; //Idée de Mouhamed adaptée à vos codes.
     }
 
+
+    //==============================================
+    //                Vider
+    //===============================================
     @Override
     public void vider() {
         this.t = new char[N];
         l = 0;
     }
-
+    
+    
+    
+    //==============================================
+    //                nbMots
+    //===============================================
     @Override
     public int nbMots() {
-        return l;
+        int nb = 0;
+        while(nb != l+1) {
+            if(t[nb] == '\0') {
+                nb = nb + 1 ;
+            }
+        }
+        return nb;
     }
+    
+    
+    
+    
+    //==============================================
+    //                CONTIENT
+    //===============================================
+    
     //Vérifie si la sequence obtenue contient la sequence m 
-    @Override
-    public boolean contient(String m) {
-        for (int i = 0; i < (this.l*40); i++) {
-            int c = i;
-            while (this.t[i] == m.charAt(i)) {
-                c++;
-            }
-            if (this.t[c] == MARQUE) {
-                return true;
-            }
+    
+@Override
+public boolean contient(String m) {
+    int i = 0;
+
+    while (i < l) {
+        int j = 0;
+
+        while (j < m.length() && i + j < l
+                && t[i + j] == m.charAt(j)) {
+            j++;
         }
-        return false;
-    }
 
-    @Override
-    public int indiceMot(String m){
-        int i;
-        //String s =  "";
-        int indice1 = 0;
-        int k = 0;
-        if(!contient(m)){
-            indice1 = -1;
-        }else{
-            while(k != l){
-                i = 0;
-                String s = "";
-                while(t[i] != MARQUE){
-                    s = s + t[i];
-                    i++;
-                }
-                if( m != s ){
-                    if(t[i] == MARQUE){
-                        indice1 = indice1 + 1;
-                    }
-                }
-
-                k++;
-            }
-
+        if (j == m.length()) {
+            return true;
         }
-        return indice1;
-    }
-    //public int indiceMot;
-    @Override
-    public void ajouterMot(String m){
-        if(!contient(m)){
-            int i = 0;
-            while(i != m.length()){
-                t[l+i] = m.charAt(i);
-                i++;
-            }
-            t[i] = MARQUE;
-            l++;
-        }
-    }
 
-    @Override
-    public String motIndice(int i) {
-        String s = "";
-        while (t[i] != MARQUE) {
-            s += t[i];
+        while (i < l && t[i] != MARQUE) {
             i++;
         }
-        return s;
+        i++;
     }
 
-    @Override
-    public boolean contientPrefixe(String p) {
-        for (int i = 0; i < (this.l*40); i++) {
-            int c = i;
-            while (c < p.length() && c < (this.l*40) && this.t[c] == p.charAt(c)) {
-                c++;
-            }
-            if (c >= p.length()) {
-                return true;
-            }
+    return false;
+}
+
+    //==============================================
+    //                Indice Mot
+    //===============================================
+@Override
+public int indiceMot(String m) {
+    int i = 0;
+    int indice = 0;
+
+    while (i < l) {
+        int j = 0;
+
+        while (j < m.length() && i + j < l
+                && t[i + j] == m.charAt(j)) {
+            j++;
         }
-        return false;
-    }
 
-    @Override
-    public String plusLongPrefixeDe(String mot) {
-        int c_max = 0;
-        int i_max = 0;
-        int c_indice = 0;
-        for (int i = 0; i < (this.l*40); i++) {
-            int c = 0;
-            while (c < (this.l*40) && c < mot.length() && mot.charAt(c) == this.t[c]) {
-                c++;
-            }
-            if (c >= mot.length() && c > c_max) {
-                c_max = c;
-                i_max = c_indice;
-            }
-            c_indice++;
+        if (j == m.length()) {
+            return indice;
         }
-        return motIndice(i_max);
+
+        while (i < l && t[i] != MARQUE) {
+            i++;
+        }
+
+        i++;
+        indice++;
     }
 
+    return -1;
+}
+    //public int indiceMot;
+    
+    
+    
+    //==============================================
+    //                Ajouter Mot
+    //===============================================
+@Override
+public void ajouterMot(String m) {
+    if (!contient(m)) {
+        if (l + m.length() > N) {
+            throw new IllegalStateException("Dictionnaire plein");
+        }
+
+        int i = 0;
+
+        while (i < m.length()) {
+            t[l + i] = m.charAt(i);
+            i++;
+        }
+
+        l = l + m.length();
+    }
+}
+
+
+
+    //==============================================
+    //                Mot Indice
+    //===============================================
+@Override
+public String motIndice(int i) {
+    int indice = 0;
+    int j = 0;
+
+    while (j < l && indice < i) {
+        if (t[j] == MARQUE) {
+            indice++;
+        }
+        j++;
+    }
+
+    String s = "";
+
+    while (j < l && t[j] != MARQUE) {
+        s += t[j];
+        j++;
+    }
+
+    return s;
+}
+
+
+    //==============================================
+    //                CONTIENT Préfixe
+    //===============================================
+@Override
+public boolean contientPrefixe(String p) {
+    int i = 0;
+
+    while (i < l) {
+        int j = 0;
+
+        while (j < p.length() && i + j < l
+                && t[i + j] == p.charAt(j)) {
+            j++;
+        }
+
+        if (j == p.length()) {
+            return true;
+        }
+
+        while (i < l && t[i] != MARQUE) {
+            i++;
+        }
+
+        i++;
+    }
+
+    return false;
+}
+
+
+
+    //==============================================
+    //                Plus long préfixe
+    //===============================================
+@Override
+public String plusLongPrefixeDe(String mot) {
+    int c_max = 0;
+    int i = 0;
+    int c_indice = 0;
+
+    while (i < l) {
+        int c = 0;
+
+        while (c < mot.length() && i + c < l
+                && mot.charAt(c) == t[i + c]
+                && t[i + c] != MARQUE) {
+            c++;
+        }
+
+        if (c > c_max) {
+            c_max = c;
+        }
+
+        while (i < l && t[i] != MARQUE) {
+            i++;
+        }
+
+        i++;
+        c_indice++;
+    }
+
+    String resultat = "";
+    int j = 0;
+
+    while (j < c_max) {
+        resultat = resultat + mot.charAt(j);
+        j++;
+    }
+
+    return resultat;
+}
 }

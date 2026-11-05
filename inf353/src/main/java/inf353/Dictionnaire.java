@@ -83,7 +83,7 @@ DictionnnaireNaif implémente Dictionnaire
         char t[]
         l
         marque de fin '\0'
-        chaque  motds est represente de maniere contigue avec  marque de fin
+        chaque  mot est represente de maniere contigue avec  marque de fin
         la marque fait partie de la sequence
 
  */
